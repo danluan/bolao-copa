@@ -14,6 +14,8 @@ const statusLabel: Record<EnrichedMatch["status"], string> = {
   pending: "A definir",
 };
 
+const bolaoMessage = "Acompanhe os palpites, os jogos e a pontuacao do participante no bolão da Copa do Mundo 2026.";
+
 function scoreValue(value: number | null) {
   return value === null ? "-" : String(value);
 }
@@ -84,7 +86,7 @@ export default async function ParticipantPage({
         <div>
           <span className="eyebrow">Previsoes do participante</span>
           <h1>{participant.nome}</h1>
-          <p>{detail.sourceNotice}</p>
+          <p>{bolaoMessage}</p>
         </div>
 
         <div className="participant-meta">

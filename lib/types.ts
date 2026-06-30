@@ -97,7 +97,6 @@ export type ParticipantDetail = {
   metadata: DashboardData["metadata"];
   participant: RankingEntry;
   guesses: ParticipantGuessDetail[];
-  sourceNotice: string;
 };
 
 export type DashboardData = {
@@ -116,5 +115,4 @@ export type DashboardData = {
   };
   matches: EnrichedMatch[];
   ranking: RankingEntry[];
-  sourceNotice: string;
 };

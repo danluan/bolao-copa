@@ -180,12 +180,6 @@ function rankParticipants(participants: Participant[], matches: OfficialMatch[],
   });
 }
 
-function sourceNotice(liveEnabled: boolean) {
-  return liveEnabled
-    ? "Ranking recalculado automaticamente com placares ao vivo quando o provedor encontra a partida."
-    : "Ranking aguardando provedor automatico de placares; sem edicao manual de resultados.";
-}
-
 export async function getDashboardData(): Promise<DashboardData> {
   const { bolao, matches } = await readOfficialMatches();
   const live = await fetchLiveScores(matches);
@@ -214,7 +208,6 @@ export async function getDashboardData(): Promise<DashboardData> {
     },
     matches: enrichedMatches.sort((a, b) => a.jogo_id - b.jogo_id),
     ranking,
-    sourceNotice: sourceNotice(live.enabled),
   };
 }
 
@@ -269,6 +262,5 @@ export async function getParticipantDetail(numeroTabela: number): Promise<Partic
         };
       })
       .sort((a, b) => a.jogo_id - b.jogo_id),
-    sourceNotice: sourceNotice(live.enabled),
   };
 }
