@@ -232,7 +232,6 @@ export default function Dashboard({ initialData }: Props) {
 
   const paidPositions = prizeSlots(data.summary.participantes);
   const topRanking = useMemo(() => data.ranking.filter((entry) => entry.position <= 10), [data.ranking]);
-  const visibleTopRanking = participantQuery ? filteredRanking : topRanking;
   const matchStages = useMemo(() => {
     return [...new Set(data.matches.map((match) => match.grupo).filter((stage): stage is string => Boolean(stage)))];
   }, [data.matches]);
@@ -334,21 +333,11 @@ export default function Dashboard({ initialData }: Props) {
                 <span className="eyebrow">Top 10</span>
                 <h2>Ranking resumido</h2>
               </div>
-              <div className="heading-actions">
-                <label className="search-box participant-search">
-                  <Search size={16} />
-                  <input
-                    value={participantQuery}
-                    onChange={(event) => setParticipantQuery(event.target.value)}
-                    placeholder="Buscar participante"
-                  />
-                </label>
-                <span className="updated">Atualizado {formatGeneratedAt(data.metadata.generatedAt)}</span>
-              </div>
+              <span className="updated">Atualizado {formatGeneratedAt(data.metadata.generatedAt)}</span>
             </div>
 
             <div className="top-ranking-list">
-              {visibleTopRanking.map((entry) => (
+              {topRanking.map((entry) => (
                 <Link
                   className="top-ranking-row ranking-row-link"
                   href={`/participantes/${entry.numero_tabela}`}
@@ -369,7 +358,6 @@ export default function Dashboard({ initialData }: Props) {
                   <ChevronRight className="row-link-icon" size={18} aria-hidden="true" />
                 </Link>
               ))}
-              {visibleTopRanking.length === 0 && <p className="empty-state">Nenhum participante encontrado.</p>}
             </div>
           </div>
 
