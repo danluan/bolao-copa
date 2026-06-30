@@ -2,6 +2,7 @@ export type RawScore = number | string | null;
 
 export type OfficialMatch = {
   jogo_id: number;
+  jogo_fifa?: string | null;
   linha_excel?: number | null;
   grupo?: string | null;
   data: string | null;
@@ -15,6 +16,7 @@ export type OfficialMatch = {
 
 export type Guess = {
   jogo_id: number;
+  jogo_fifa?: string | null;
   linha_excel?: number | null;
   grupo?: string | null;
   data: string | null;
@@ -77,6 +79,25 @@ export type RankingEntry = {
   jogosPontuados: number;
   variacao: number | null;
   ultimoJogoPontuado: number | null;
+};
+
+export type ParticipantGuessDetail = Guess & {
+  palpite_placar_a_num: number | null;
+  palpite_placar_b_num: number | null;
+  oficial_placar_a_num: number | null;
+  oficial_placar_b_num: number | null;
+  pontuacao_recalculada: number;
+  status: MatchStatus;
+  displayDate: string;
+  displayTime: string;
+  sourceLabel: string;
+};
+
+export type ParticipantDetail = {
+  metadata: DashboardData["metadata"];
+  participant: RankingEntry;
+  guesses: ParticipantGuessDetail[];
+  sourceNotice: string;
 };
 
 export type DashboardData = {

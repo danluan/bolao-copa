@@ -1,10 +1,12 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import {
   Activity,
   BookOpen,
   Check,
+  ChevronRight,
   CircleDot,
   Clock3,
   ListChecks,
@@ -15,6 +17,7 @@ import {
   Users,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { flagForTeam } from "@/lib/flags";
 import type { DashboardData, EnrichedMatch } from "@/lib/types";
 
 type Props = {
@@ -113,6 +116,25 @@ function matchStatusText(match: EnrichedMatch) {
   return statusLabel[match.status];
 }
 
+function matchIdText(match: Pick<EnrichedMatch, "jogo_id" | "jogo_fifa">) {
+  return match.jogo_fifa ? `Jogo ${match.jogo_id} · ${match.jogo_fifa}` : `Jogo ${match.jogo_id}`;
+}
+
+function TeamName({ name }: { name: string | null }) {
+  const flag = flagForTeam(name);
+
+  return (
+    <span className="team-name">
+      {flag && (
+        <span className="team-flag" aria-hidden="true">
+          {flag}
+        </span>
+      )}
+      <span>{name ?? "A definir"}</span>
+    </span>
+  );
+}
+
 function MatchSummaryCard({
   match,
   title,
@@ -126,12 +148,16 @@ function MatchSummaryCard({
       {match ? (
         <>
           <div className="summary-scoreline">
-            <strong>{match.time_a ?? "A definir"}</strong>
+            <strong>
+              <TeamName name={match.time_a} />
+            </strong>
             <span>{scoreText(match)}</span>
-            <strong>{match.time_b ?? "A definir"}</strong>
+            <strong>
+              <TeamName name={match.time_b} />
+            </strong>
           </div>
           <div className="summary-match-meta">
-            <span>Jogo {match.jogo_id}</span>
+            <span>{matchIdText(match)}</span>
             <span>{match.displayDate}</span>
             <span>{match.displayTime}</span>
             <span>{matchStatusText(match)}</span>
@@ -280,7 +306,12 @@ export default function Dashboard({ initialData }: Props) {
 
             <div className="top-ranking-list">
               {topRanking.map((entry) => (
-                <div className="top-ranking-row" key={entry.numero_tabela}>
+                <Link
+                  className="top-ranking-row ranking-row-link"
+                  href={`/participantes/${entry.numero_tabela}`}
+                  key={entry.numero_tabela}
+                  aria-label={`Ver palpites de ${entry.nome}`}
+                >
                   <div className={`position ${entry.position <= paidPositions ? "prize-position" : ""}`}>
                     {entry.position}
                   </div>
@@ -292,7 +323,8 @@ export default function Dashboard({ initialData }: Props) {
                     <strong>{entry.pontos}</strong>
                     <span>pontos</span>
                   </div>
-                </div>
+                  <ChevronRight className="row-link-icon" size={18} aria-hidden="true" />
+                </Link>
               ))}
             </div>
           </div>
@@ -317,7 +349,12 @@ export default function Dashboard({ initialData }: Props) {
 
             <div className="ranking-list">
               {data.ranking.map((entry) => (
-                <div className="ranking-row" key={entry.numero_tabela}>
+                <Link
+                  className="ranking-row ranking-row-link"
+                  href={`/participantes/${entry.numero_tabela}`}
+                  key={entry.numero_tabela}
+                  aria-label={`Ver palpites de ${entry.nome}`}
+                >
                   <div className={`position ${entry.position <= paidPositions ? "prize-position" : ""}`}>
                     {entry.position}
                   </div>
@@ -333,7 +370,8 @@ export default function Dashboard({ initialData }: Props) {
                       {entry.variacao === null ? "novo" : entry.variacao > 0 ? `+${entry.variacao}` : entry.variacao}
                     </span>
                   </div>
-                </div>
+                  <ChevronRight className="row-link-icon" size={18} aria-hidden="true" />
+                </Link>
               ))}
             </div>
           </div>
@@ -342,7 +380,7 @@ export default function Dashboard({ initialData }: Props) {
             <div className="panel-heading compact">
               <div>
                 <span className="eyebrow">Fonte automatica</span>
-                <h2>16 avos de final</h2>
+                <h2>Mata-mata</h2>
               </div>
               <Activity size={20} />
             </div>
@@ -399,7 +437,7 @@ export default function Dashboard({ initialData }: Props) {
             {filteredMatches.map((match) => (
               <article className={`match-card ${match.status}`} key={match.jogo_id}>
                 <div className="match-meta">
-                  <span className="match-id">Jogo {match.jogo_id}</span>
+                  <span className="match-id">{matchIdText(match)}</span>
                   <span>{match.grupo ?? "Sem fase"}</span>
                   <span>
                     <Clock3 size={14} />
@@ -408,7 +446,9 @@ export default function Dashboard({ initialData }: Props) {
                 </div>
 
                 <div className="scoreline">
-                  <strong>{match.time_a ?? "A definir"}</strong>
+                  <strong>
+                    <TeamName name={match.time_a} />
+                  </strong>
                   <div className="score">
                     <span>{scoreText(match)}</span>
                     {match.isLive && (
@@ -418,7 +458,9 @@ export default function Dashboard({ initialData }: Props) {
                       </em>
                     )}
                   </div>
-                  <strong>{match.time_b ?? "A definir"}</strong>
+                  <strong>
+                    <TeamName name={match.time_b} />
+                  </strong>
                 </div>
 
                 <div className="match-actions">

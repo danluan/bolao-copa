@@ -5,6 +5,7 @@ import type {
   DashboardData,
   EnrichedMatch,
   OfficialMatch,
+  ParticipantDetail,
   Participant,
   RankingEntry,
   RawScore,
@@ -179,6 +180,12 @@ function rankParticipants(participants: Participant[], matches: OfficialMatch[],
   });
 }
 
+function sourceNotice(liveEnabled: boolean) {
+  return liveEnabled
+    ? "Ranking recalculado automaticamente com placares ao vivo quando o provedor encontra a partida."
+    : "Ranking aguardando provedor automatico de placares; sem edicao manual de resultados.";
+}
+
 export async function getDashboardData(): Promise<DashboardData> {
   const { bolao, matches } = await readOfficialMatches();
   const live = await fetchLiveScores(matches);
@@ -207,8 +214,61 @@ export async function getDashboardData(): Promise<DashboardData> {
     },
     matches: enrichedMatches.sort((a, b) => a.jogo_id - b.jogo_id),
     ranking,
-    sourceNotice: live.enabled
-      ? "Ranking recalculado automaticamente com placares ao vivo quando o provedor encontra a partida."
-      : "Ranking aguardando provedor automatico de placares; sem edicao manual de resultados.",
+    sourceNotice: sourceNotice(live.enabled),
+  };
+}
+
+export async function getParticipantDetail(numeroTabela: number): Promise<ParticipantDetail | null> {
+  const { bolao, matches } = await readOfficialMatches();
+  const participant = bolao.participantes.find((entry) => entry.numero_tabela === numeroTabela);
+  if (!participant) return null;
+
+  const live = await fetchLiveScores(matches);
+  const ranking = rankParticipants(bolao.participantes, matches, live.scores);
+  const rankingEntry = ranking.find((entry) => entry.numero_tabela === participant.numero_tabela);
+  if (!rankingEntry) return null;
+
+  const matchById = new Map(matches.map((match) => [match.jogo_id, match]));
+
+  return {
+    metadata: {
+      ...bolao.metadata,
+      total_jogos: matches.length,
+      generatedAt: new Date().toISOString(),
+      liveProvider: live.provider,
+      liveEnabled: live.enabled,
+    },
+    participant: rankingEntry,
+    guesses: participant.palpites
+      .map((guess) => {
+        const official = matchById.get(guess.jogo_id);
+        const score = official
+          ? currentScoreForMatch(official, live.scores)
+          : { a: guess.oficial_placar_a, b: guess.oficial_placar_b };
+        const enriched = official ? enrichMatch(official, live.scores.get(guess.jogo_id)) : null;
+
+        return {
+          ...guess,
+          oficial_placar_a: score.a,
+          oficial_placar_b: score.b,
+          palpite_placar_a_num: toScore(guess.palpite_placar_a),
+          palpite_placar_b_num: toScore(guess.palpite_placar_b),
+          oficial_placar_a_num: toScore(score.a),
+          oficial_placar_b_num: toScore(score.b),
+          pontuacao_recalculada: calculatePoints(guess.palpite_placar_a, guess.palpite_placar_b, score.a, score.b),
+          status: enriched?.status ?? "pending",
+          displayDate:
+            enriched?.displayDate ??
+            formatDate({
+              ...guess,
+              placar_a: guess.oficial_placar_a,
+              placar_b: guess.oficial_placar_b,
+            }),
+          displayTime: enriched?.displayTime ?? guess.hora ?? "--:--",
+          sourceLabel: enriched?.sourceLabel ?? "planilha",
+        };
+      })
+      .sort((a, b) => a.jogo_id - b.jogo_id),
+    sourceNotice: sourceNotice(live.enabled),
   };
 }

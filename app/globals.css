@@ -238,7 +238,7 @@ button {
 
 .top-ranking-row {
   display: grid;
-  grid-template-columns: 42px minmax(0, 1fr) 84px;
+  grid-template-columns: 42px minmax(0, 1fr) 84px 24px;
   gap: 12px;
   align-items: center;
   min-height: 58px;
@@ -246,6 +246,32 @@ button {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--surface-strong);
+}
+
+.ranking-row-link {
+  color: inherit;
+  text-decoration: none;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    transform 0.18s ease;
+}
+
+.ranking-row-link:hover,
+.ranking-row-link:focus-visible {
+  border-color: rgba(24, 122, 77, 0.45);
+  background: #fff;
+  transform: translateY(-1px);
+}
+
+.ranking-row-link:focus-visible {
+  outline: 3px solid rgba(24, 122, 77, 0.2);
+  outline-offset: 2px;
+}
+
+.row-link-icon {
+  color: var(--muted);
+  justify-self: end;
 }
 
 .prize-position {
@@ -294,7 +320,12 @@ button {
   font-size: 1.1rem;
 }
 
-.summary-scoreline span {
+.summary-scoreline .team-name,
+.guess-teams .team-name {
+  align-items: flex-start;
+}
+
+.summary-scoreline > span {
   display: inline-grid;
   width: 104px;
   min-height: 46px;
@@ -370,7 +401,7 @@ button {
 
 .ranking-row {
   display: grid;
-  grid-template-columns: 42px minmax(0, 1fr) 76px;
+  grid-template-columns: 42px minmax(0, 1fr) 76px 24px;
   gap: 12px;
   align-items: center;
   min-height: 62px;
@@ -402,6 +433,25 @@ button {
   overflow-wrap: anywhere;
 }
 
+.team-name {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  gap: 7px;
+  vertical-align: middle;
+}
+
+.team-name span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.team-flag {
+  flex: 0 0 auto;
+  font-size: 1.08em;
+  line-height: 1;
+}
+
 .participant span {
   display: block;
   margin-top: 3px;
@@ -427,6 +477,184 @@ button {
 .match-list {
   display: grid;
   gap: 12px;
+}
+
+.participant-page {
+  display: grid;
+  gap: 18px;
+}
+
+.back-link {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 40px;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.9);
+  font-weight: 850;
+  text-decoration: none;
+}
+
+.back-link:hover,
+.back-link:focus-visible {
+  border-color: rgba(24, 122, 77, 0.45);
+}
+
+.participant-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: end;
+  padding: clamp(18px, 3vw, 30px);
+  border-radius: 8px;
+  color: #fff;
+  background:
+    linear-gradient(90deg, rgba(17, 23, 20, 0.96), rgba(17, 23, 20, 0.82)),
+    var(--charcoal);
+  box-shadow: var(--shadow);
+}
+
+.participant-header h1 {
+  margin: 8px 0 10px;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.participant-header p {
+  max-width: 720px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.74);
+  line-height: 1.55;
+}
+
+.participant-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.participant-meta span {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  padding: 6px 10px;
+  color: rgba(255, 255, 255, 0.86);
+  background: rgba(255, 255, 255, 0.09);
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+
+.participant-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.guesses-panel {
+  margin-bottom: 24px;
+}
+
+.guess-list {
+  display: grid;
+  gap: 10px;
+}
+
+.guess-row {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr) 260px 86px;
+  gap: 14px;
+  align-items: center;
+  min-height: 96px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-left: 5px solid #9aa69b;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.guess-row.live {
+  border-left-color: var(--red);
+}
+
+.guess-row.finished {
+  border-left-color: var(--green);
+}
+
+.guess-teams {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.guess-teams strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.guess-teams strong:first-child {
+  text-align: right;
+}
+
+.guess-teams > span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 850;
+  text-align: center;
+}
+
+.guess-scores {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.guess-scores div {
+  display: grid;
+  gap: 4px;
+  min-height: 58px;
+  align-content: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px;
+  background: var(--surface-strong);
+  text-align: center;
+}
+
+.guess-scores span,
+.guess-result span {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.guess-scores strong {
+  font-size: 1.05rem;
+}
+
+.guess-result {
+  display: grid;
+  gap: 3px;
+  justify-items: end;
+  text-align: right;
+}
+
+.guess-result strong {
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.guess-result .status-pill {
+  margin-top: 4px;
 }
 
 .source-stack {
@@ -783,6 +1011,19 @@ select:focus {
     grid-template-columns: 1fr;
   }
 
+  .participant-header,
+  .guess-row {
+    grid-template-columns: 1fr;
+  }
+
+  .participant-meta {
+    justify-content: flex-start;
+  }
+
+  .participant-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .match-card {
     grid-template-columns: 170px minmax(0, 1fr);
   }
@@ -812,6 +1053,10 @@ select:focus {
     margin: 12px 0;
   }
 
+  .participant-stats {
+    grid-template-columns: 1fr;
+  }
+
   .dashboard-tabs {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -835,12 +1080,12 @@ select:focus {
   }
 
   .ranking-row {
-    grid-template-columns: 38px minmax(0, 1fr) 62px;
+    grid-template-columns: 38px minmax(0, 1fr) 62px 20px;
     padding: 9px;
   }
 
   .top-ranking-row {
-    grid-template-columns: 38px minmax(0, 1fr) 62px;
+    grid-template-columns: 38px minmax(0, 1fr) 62px 20px;
     padding: 9px;
   }
 
@@ -870,6 +1115,22 @@ select:focus {
 
   .score {
     place-items: start;
+  }
+
+  .guess-teams,
+  .guess-scores {
+    grid-template-columns: 1fr;
+  }
+
+  .guess-teams strong:first-child,
+  .guess-teams strong:last-child,
+  .guess-teams > span {
+    text-align: left;
+  }
+
+  .guess-result {
+    justify-items: start;
+    text-align: left;
   }
 
   .match-actions {
